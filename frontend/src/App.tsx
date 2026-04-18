@@ -1,35 +1,93 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LandingPage from './pages/LandingPage';
+import HomePage from './pages/HomePage';
+import PlaylistView from './pages/PlaylistView';
+import TownSquare from './pages/TownSquare';
 
-function App() {
-  const [count, setCount] = useState(0)
+/** Guards a route — redirects to "/" if the user is not authenticated. */
+function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0a0a0a',
+      }}>
+        <div style={{
+          width: 40, height: 40,
+          border: '3px solid rgba(255,255,255,0.1)',
+          borderTopColor: '#1DB954',
+          borderRadius: '50%',
+          animation: 'spin 0.7s linear infinite',
+        }} />
+        {/* Inline keyframe injected via style tag on first render */}
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    );
+  }
+
+  return user ? <>{children}</> : <Navigate to="/" replace />;
 }
 
-export default App
+/** Redirects logged-in users away from the landing page. */
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return null;
+  return user ? <Navigate to="/home" replace /> : <>{children}</>;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PublicRoute>
+            <LandingPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/home"
+        element={
+          <PrivateRoute>
+            <HomePage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/playlist/:id"
+        element={
+          <PrivateRoute>
+            <PlaylistView />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/feed"
+        element={
+          <PrivateRoute>
+            <TownSquare />
+          </PrivateRoute>
+        }
+      />
+      {/* Catch-all → landing */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}

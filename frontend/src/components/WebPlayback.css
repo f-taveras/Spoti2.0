@@ -1,0 +1,128 @@
+.web-playback {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 90px;
+  background: #181818;
+  border-top: 1px solid #282828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.web-playback--free {
+  background: #2a0a0a;
+  border-top: 1px solid #ff4444;
+}
+
+.web-playback__warning {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffaaaa;
+}
+
+.web-playback__warning span {
+  font-weight: bold;
+  font-size: 18px;
+  color: #ff4444;
+}
+
+.web-playback__warning p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.web-playback__content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.web-playback__state {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+}
+
+.web-playback__state strong {
+  color: var(--color-primary);
+}
+
+.web-playback__track-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 30%;
+}
+
+.web-playback__cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.web-playback__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.web-playback__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.web-playback__artist {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.web-playback__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 40%;
+}
+
+.web-playback__btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.web-playback__btn:hover {
+  color: var(--color-text);
+  transform: scale(1.1);
+}
+
+.web-playback__btn--play {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: #000;
+  font-size: 18px;
+}
+
+.web-playback__btn--play:hover {
+  background: var(--color-primary);
+  transform: scale(1.05);
+}

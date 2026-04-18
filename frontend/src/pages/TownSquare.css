@@ -1,0 +1,47 @@
+.town-square {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.town-square__main {
+  flex: 1;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 24px 100px 24px;
+}
+
+.town-square__title {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -1px;
+}
+
+.town-square__subtitle {
+  color: var(--color-text-muted);
+  font-size: 16px;
+  margin: 0 0 40px 0;
+}
+
+.town-square__feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.town-square__empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.town-square__loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-primary);
+  font-weight: bold;
+}
