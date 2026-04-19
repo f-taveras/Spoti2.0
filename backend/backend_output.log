@@ -583,3 +583,7 @@ org.springframework.web.client.HttpClientErrorException$Unauthorized: 401 Unauth
 
 2026-04-19T15:35:44.509-04:00  WARN 169321 --- [backend] [io-8080-exec-10] c.s.backend.security.JwtAuthFilter       : No auth-token cookie found for protected request: /api/profiles/max
 2026-04-19T15:35:44.530-04:00  WARN 169321 --- [backend] [nio-8080-exec-4] c.s.backend.security.JwtAuthFilter       : No auth-token cookie found for protected request: /api/profiles/max
+2026-04-19T15:58:14.866-04:00  INFO 169321 --- [backend] [nio-8080-exec-7] c.s.backend.controller.PostController    : Fetching feed for user: max
+2026-04-19T15:58:14.880-04:00  INFO 169321 --- [backend] [nio-8080-exec-9] c.s.backend.controller.PostController    : Fetching feed for user: max
+2026-04-19T15:58:22.049-04:00  INFO 169321 --- [backend] [nio-8080-exec-5] c.s.backend.controller.PostController    : Fetching feed for user: max
+2026-04-19T15:58:22.069-04:00  INFO 169321 --- [backend] [nio-8080-exec-7] c.s.backend.controller.PostController    : Fetching feed for user: max
