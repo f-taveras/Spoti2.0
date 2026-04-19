@@ -69,6 +69,19 @@
   gap: 12px;
 }
 
+.navbar__user-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+
+.navbar__user-link:hover {
+  opacity: 0.8;
+}
+
 .navbar__avatar {
   background: var(--color-primary);
   width: 32px;

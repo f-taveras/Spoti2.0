@@ -16,6 +16,9 @@ public class PostResponse {
     private long likeCount;
     private int commentCount;
     private boolean likedByCurrentUser;
+    private String userProfileImageUrl;
+    private int curatorScore;
+    private int signalScore;
 
     public PostResponse() {}
 
@@ -47,4 +50,13 @@ public class PostResponse {
     public void setCommentCount(int commentCount) { this.commentCount = commentCount; }
     public boolean isLikedByCurrentUser() { return likedByCurrentUser; }
     public void setLikedByCurrentUser(boolean likedByCurrentUser) { this.likedByCurrentUser = likedByCurrentUser; }
+
+    public String getUserProfileImageUrl() { return userProfileImageUrl; }
+    public void setUserProfileImageUrl(String userProfileImageUrl) { this.userProfileImageUrl = userProfileImageUrl; }
+
+    public int getCuratorScore() { return curatorScore; }
+    public void setCuratorScore(int curatorScore) { this.curatorScore = curatorScore; }
+
+    public int getSignalScore() { return signalScore; }
+    public void setSignalScore(int signalScore) { this.signalScore = signalScore; }
 }

@@ -35,6 +35,12 @@ public class User {
     @Column(nullable = false)
     private String role = "USER";
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile profile;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserReputation reputation;
+
     // ── Constructors ───────────────────────────────────────────────────────────
 
     public User() {}
@@ -51,6 +57,7 @@ public class User {
     // ── Getters & Setters ──────────────────────────────────────────────────────
 
     public Long getId()                       { return id; }
+    public void setId(Long id)                { this.id = id; }
 
     public String getUsername()               { return username; }
     public void   setUsername(String u)       { this.username = u; }
@@ -75,4 +82,10 @@ public class User {
 
     public String getRole()                   { return role; }
     public void   setRole(String r)           { this.role = r; }
+
+    public UserProfile getProfile()           { return profile; }
+    public void setProfile(UserProfile p)     { this.profile = p; }
+
+    public UserReputation getReputation()     { return reputation; }
+    public void setReputation(UserReputation r) { this.reputation = r; }
 }

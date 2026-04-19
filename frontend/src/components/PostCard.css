@@ -14,26 +14,77 @@
 .post-card__header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .post-card__avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--spotify-green);
   color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 900;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+.post-card__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .post-card__meta {
   display: flex;
   flex-direction: column;
+}
+
+.post-card__author-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-card__author-link, .post-card__avatar-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-card__author-link:hover {
+  text-decoration: underline;
+}
+
+.post-card__badges {
+  display: flex;
+  gap: 5px;
+}
+
+.mini-badge {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-weight: 800;
+  border: 1px solid rgba(255,255,255,0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mini-badge[title*="Curator"] {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+}
+
+.mini-badge[title*="Signal"] {
+  background: rgba(29, 185, 84, 0.1);
+  border-color: rgba(29, 185, 84, 0.3);
+  color: #1ed760;
 }
 
 .post-card__meta strong {

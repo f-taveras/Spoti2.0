@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import PlaylistView from './pages/PlaylistView';
 import TownSquare from './pages/TownSquare';
+import ProfilePage from './pages/ProfilePage';
 
 /** Guards a route — redirects to "/" if the user is not authenticated. */
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -69,10 +70,18 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/feed"
+        path="/town-square"
         element={
           <PrivateRoute>
             <TownSquare />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile/:username"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
           </PrivateRoute>
         }
       />

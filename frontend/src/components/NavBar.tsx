@@ -19,16 +19,23 @@ export default function NavBar() {
         <NavLink to="/home" className={({ isActive }) => (isActive ? 'navbar__link active' : 'navbar__link')}>
           Home
         </NavLink>
-        <NavLink to="/feed" className={({ isActive }) => (isActive ? 'navbar__link active' : 'navbar__link')}>
+        <NavLink to="/town-square" className={({ isActive }) => (isActive ? 'navbar__link active' : 'navbar__link')}>
           Town Square
         </NavLink>
+        {user && (
+          <NavLink to={`/profile/${user.username}`} className={({ isActive }) => (isActive ? 'navbar__link active' : 'navbar__link')}>
+            Profile
+          </NavLink>
+        )}
       </nav>
 
       <div className="navbar__user">
-        <span className="navbar__avatar" aria-hidden="true">
-          {user?.username?.[0]?.toUpperCase() ?? '?'}
-        </span>
-        <span className="navbar__username">{user?.username}</span>
+        <NavLink to={`/profile/${user?.username}`} className="navbar__user-link">
+          <span className="navbar__avatar" aria-hidden="true">
+            {user?.username?.[0]?.toUpperCase() ?? '?'}
+          </span>
+          <span className="navbar__username">{user?.username}</span>
+        </NavLink>
         <button id="btn-logout" className="navbar__logout" onClick={logout}>
           Log out
         </button>

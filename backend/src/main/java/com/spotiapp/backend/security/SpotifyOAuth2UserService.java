@@ -29,10 +29,23 @@ public class SpotifyOAuth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attrs = oAuth2User.getAttributes();
         String spotifyId    = (String) attrs.get("id");
         String displayName  = (String) attrs.get("display_name");
-        String email        = (String) attrs.get("email");       // may be null if scope not granted
+        String email        = (String) attrs.get("email");
 
-        // Ensure the user exists in our database
-        userService.findOrCreateSpotifyUser(spotifyId, displayName, email);
+        // Extract profile image URL
+        String profileImageUrl = null;
+        Object imagesObj = attrs.get("images");
+        if (imagesObj instanceof java.util.List) {
+            java.util.List<?> images = (java.util.List<?>) imagesObj;
+            if (!images.isEmpty()) {
+                Object firstImage = images.get(0);
+                if (firstImage instanceof Map) {
+                    profileImageUrl = (String) ((Map<?, ?>) firstImage).get("url");
+                }
+            }
+        }
+
+        // Ensure the user exists in our database with their latest profile info
+        userService.findOrCreateSpotifyUser(spotifyId, displayName, email, profileImageUrl);
 
         return oAuth2User;
     }

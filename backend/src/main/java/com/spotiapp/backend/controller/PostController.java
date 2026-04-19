@@ -6,6 +6,7 @@ import com.spotiapp.backend.dto.PostResponse;
 import com.spotiapp.backend.model.Comment;
 import com.spotiapp.backend.model.*;
 import com.spotiapp.backend.repository.*;
+import com.spotiapp.backend.service.ReputationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,9 @@ public class PostController {
 
     @Autowired
     private CachedPlaylistRepository cachedPlaylistRepository;
+
+    @Autowired
+    private ReputationService reputationService;
 
     @GetMapping
     public ResponseEntity<List<PostResponse>> getAllPosts(Authentication authentication) {
@@ -73,6 +78,16 @@ public class PostController {
             
             boolean liked = reactionRepository.findByPostIdAndUserId(post.getId(), currentUser.getId()).isPresent();
             res.setLikedByCurrentUser(liked);
+            
+            // Populate Author Profile & Reputation
+            User author = post.getUser();
+            if (author.getProfile() != null) {
+                res.setUserProfileImageUrl(author.getProfile().getAvatarUrl());
+            }
+            if (author.getReputation() != null) {
+                res.setCuratorScore(author.getReputation().getCuratorScore());
+                res.setSignalScore(author.getReputation().getSignalScore());
+            }
             
             if (post.getMediaType() == MediaType.TRACK) {
                 trackRepository.findBySpotifyId(post.getSpotifyId()).ifPresent(track -> {
@@ -108,6 +123,19 @@ public class PostController {
 
         Post newPost = new Post(currentUser, request.getContent(), request.getMediaType(), request.getSpotifyId());
         Post saved = postRepository.save(newPost);
+
+        // --- Reputation Logic: Curator Bonus ---
+        if (request.getSourcePostId() != null) {
+            postRepository.findById(request.getSourcePostId()).ifPresent(sourcePost -> {
+                User originalAuthor = sourcePost.getUser();
+                // Reward only if sharing someone else's content
+                if (!originalAuthor.getId().equals(currentUser.getId())) {
+                    reputationService.incrementCuratorScore(originalAuthor, 5);
+                    logger.info("Curator bonus awarded to user {} for share by {}", originalAuthor.getUsername(), username);
+                }
+            });
+        }
+
         return ResponseEntity.ok(saved);
     }
 
@@ -137,7 +165,7 @@ public class PostController {
         }
 
         postRepository.delete(post);
-        return ResponseEntity.ok("Deleted successfully");
+        return ResponseEntity.ok(Map.of("message", "Deleted successfully"));
     }
 
     @PostMapping("/{postId}/like")
@@ -150,11 +178,17 @@ public class PostController {
         Optional<Reaction> existing = reactionRepository.findByPostIdAndUserId(postId, currentUser.getId());
         if (existing.isPresent()) {
             reactionRepository.delete(existing.get());
-            return ResponseEntity.ok("Unliked");
+            return ResponseEntity.ok(Map.of("message", "Unliked"));
         } else {
             Reaction reaction = new Reaction(post, currentUser);
             reactionRepository.save(reaction);
-            return ResponseEntity.ok("Liked");
+
+            // --- Reputation Logic: Signal Bonus (Like) ---
+            if (!post.getUser().getId().equals(currentUser.getId())) {
+                reputationService.incrementSignalScore(post.getUser(), 1);
+            }
+
+            return ResponseEntity.ok(Map.of("message", "Liked"));
         }
     }
 
@@ -167,6 +201,12 @@ public class PostController {
 
         Comment comment = new Comment(post, currentUser, request.getContent());
         Comment saved = commentRepository.save(comment);
+
+        // --- Reputation Logic: Signal Bonus (Comment) ---
+        if (!post.getUser().getId().equals(currentUser.getId())) {
+            reputationService.incrementSignalScore(post.getUser(), 2);
+        }
+
         return ResponseEntity.ok(saved);
     }
 

@@ -25,7 +25,7 @@ import java.util.Map;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final String FRONTEND_HOME = "http://127.0.0.1:5173/home";
+    private static final String FRONTEND_HOME = "http://192.168.1.131:5173/home";
 
     @Autowired private JwtUtil                       jwtUtil;
     @Autowired private UserService                   userService;
@@ -66,7 +66,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // cookie.setSecure(true); // Enable in production with HTTPS
         response.addCookie(cookie);
 
+        // Dynamically redirect to whichever host initiated the login
+        // (localhost or LAN IP), so both work without any config change
+        String frontendHost = request.getServerName();
+        int frontendPort = 5173;
+        String frontendHome = "http://" + frontendHost + ":" + frontendPort + "/home";
+
         // Send the browser to the React home page
-        response.sendRedirect(FRONTEND_HOME);
+        response.sendRedirect(frontendHome);
     }
 }

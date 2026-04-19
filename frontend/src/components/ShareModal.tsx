@@ -10,9 +10,10 @@ interface ShareModalProps {
   mediaName: string;
   mediaArtist: string;
   mediaArtUrl: string;
+  sourcePostId?: number;
 }
 
-export default function ShareModal({ isOpen, onClose, mediaType, spotifyId, mediaName, mediaArtist, mediaArtUrl }: ShareModalProps) {
+export default function ShareModal({ isOpen, onClose, mediaType, spotifyId, mediaName, mediaArtist, mediaArtUrl, sourcePostId }: ShareModalProps) {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,7 +30,7 @@ export default function ShareModal({ isOpen, onClose, mediaType, spotifyId, medi
       }
 
       // 2. Create the Post
-      await apiClient.createPost({ content, mediaType, spotifyId });
+      await apiClient.createPost({ content, mediaType, spotifyId, sourcePostId });
       
       onClose();
       setContent('');

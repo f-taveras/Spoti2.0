@@ -57,8 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await apiClient.post<void>('/api/auth/logout', {});
-    setUser(null);
+    try {
+      await apiClient.post<void>('/api/auth/logout', {});
+    } catch (err) {
+      console.error('Logout request failed', err);
+    } finally {
+      setUser(null);
+      window.location.href = '/'; // Hard redirect to landing page
+    }
   };
 
   return (

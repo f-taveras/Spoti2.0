@@ -39,6 +39,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/profiles/**").permitAll()
+
                 // ── Everything else requires authentication ────────────────────
                 .anyRequest().authenticated()
             )
@@ -79,7 +82,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://127.0.0.1:5173", "http://localhost:5173"));
+        config.setAllowedOrigins(List.of(
+            "http://127.0.0.1:5173", 
+            "http://localhost:5173",
+            "http://192.168.1.131:5173"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

@@ -39,10 +39,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const apiClient = {
-  get:    <T>(path: string)                         => request<T>(path, { method: 'GET' }),
-  post:   <T>(path: string, body: unknown)          => request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-  put:    <T>(path: string, body: unknown)          => request<T>(path, { method: 'PUT',  body: JSON.stringify(body) }),
-  delete: <T>(path: string)                         => request<T>(path, { method: 'DELETE' }),
+  get: <T>(path: string) => request<T>(path, { method: 'GET' }),
+  post: <T>(path: string, body: unknown) => request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
+  put: <T>(path: string, body: unknown) => request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 
   /**
    * Securely fetch the user's Spotify access token.
@@ -64,7 +64,7 @@ export const apiClient = {
   getPosts: async () => {
     return request<any[]>('/api/posts');
   },
-  createPost: async (payload: { content: string, mediaType: 'TRACK' | 'PLAYLIST', spotifyId: string }) => {
+  createPost: async (payload: { content: string, mediaType: 'TRACK' | 'PLAYLIST', spotifyId: string, sourcePostId?: number }) => {
     return request<any>('/api/posts', { method: 'POST', body: JSON.stringify(payload) });
   },
   toggleLike: async (postId: number) => {
@@ -81,5 +81,21 @@ export const apiClient = {
   },
   cacheTrack: async (payload: { spotifyId: string, name: string, artistName: string, albumArtUrl: string }) => {
     return request<any>('/api/tracks/cache', { method: 'POST', body: JSON.stringify(payload) });
+  },
+
+  /**
+   * --- Profile & Social Endpoints ---
+   */
+  getProfile: async (username: string) => {
+    return request<any>(`/api/profiles/${username}`);
+  },
+  updateProfile: async (updates: any) => {
+    return request<any>('/api/profiles/me', { method: 'PUT', body: JSON.stringify(updates) });
+  },
+  toggleFollow: async (username: string) => {
+    return request<{ message: string, following: boolean }>(`/api/social/follow/${username}`, { method: 'POST', body: JSON.stringify({}) });
+  },
+  checkFollowing: async (username: string) => {
+    return request<{ following: boolean }>(`/api/social/is-following/${username}`);
   },
 };

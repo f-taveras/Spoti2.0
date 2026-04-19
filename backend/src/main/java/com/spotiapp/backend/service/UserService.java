@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         return new org.springframework.security.core.userdetails.User(
@@ -50,6 +50,11 @@ public class UserService implements UserDetailsService {
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword())
         );
+
+        // Initialize Profile and Reputation
+        user.setProfile(new com.spotiapp.backend.model.UserProfile(user));
+        user.setReputation(new com.spotiapp.backend.model.UserReputation(user));
+
         return userRepository.save(user);
     }
 
@@ -64,12 +69,18 @@ public class UserService implements UserDetailsService {
      * Find an existing user by Spotify ID, link Spotify to an existing local account
      * if the email matches, or create a brand-new Spotify-only user.
      */
-    public User findOrCreateSpotifyUser(String spotifyId, String displayName, String email) {
+    public User findOrCreateSpotifyUser(String spotifyId, String displayName, String email, String profileImageUrl) {
 
         // 1. Already have a Spotify-linked account?
         Optional<User> bySpotifyId = userRepository.findBySpotifyId(spotifyId);
         if (bySpotifyId.isPresent()) {
-            return bySpotifyId.get();
+            User existing = bySpotifyId.get();
+            // Update profile info if changed
+            if (existing.getProfile() != null) {
+                existing.getProfile().setAvatarUrl(profileImageUrl);
+                existing.getProfile().setDisplayName(displayName);
+            }
+            return userRepository.save(existing);
         }
 
         // 2. Existing local account with same email → link it
@@ -78,6 +89,10 @@ public class UserService implements UserDetailsService {
             if (byEmail.isPresent()) {
                 User existing = byEmail.get();
                 existing.setSpotifyId(spotifyId);
+                if (existing.getProfile() != null) {
+                    existing.getProfile().setAvatarUrl(profileImageUrl);
+                    existing.getProfile().setDisplayName(displayName);
+                }
                 return userRepository.save(existing);
             }
         }
@@ -91,7 +106,14 @@ public class UserService implements UserDetailsService {
         user.setSpotifyId(spotifyId);
         user.setAuthProvider(AuthProvider.SPOTIFY);
         user.setRole("USER");
-        // password intentionally left null for Spotify users
+
+        // Initialize Profile and Reputation
+        com.spotiapp.backend.model.UserProfile profile = new com.spotiapp.backend.model.UserProfile(user);
+        profile.setDisplayName(displayName);
+        profile.setAvatarUrl(profileImageUrl);
+        user.setProfile(profile);
+
+        user.setReputation(new com.spotiapp.backend.model.UserReputation(user));
 
         return userRepository.save(user);
     }

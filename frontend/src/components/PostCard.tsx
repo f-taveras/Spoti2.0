@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { apiClient } from '../services/apiClient';
+import ShareModal from './ShareModal';
 import './PostCard.css';
 
 interface PostResponse {
@@ -15,6 +17,9 @@ interface PostResponse {
   likeCount: number;
   commentCount: number;
   likedByCurrentUser: boolean;
+  userProfileImageUrl: string;
+  curatorScore: number;
+  signalScore: number;
 }
 
 interface Comment {
@@ -30,11 +35,12 @@ export default function PostCard({ post }: { post: PostResponse }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const handleLike = async () => {
     try {
-      const responseText = await apiClient.toggleLike(post.id);
-      if (responseText === 'Liked') {
+      const data = await apiClient.toggleLike(post.id);
+      if (data.message === 'Liked') {
         setLikes(l => l + 1);
         setIsLiked(true);
       } else {
@@ -76,9 +82,25 @@ export default function PostCard({ post }: { post: PostResponse }) {
   return (
     <div className="post-card">
       <div className="post-card__header">
-        <div className="post-card__avatar">{post.username?.[0]?.toUpperCase()}</div>
+        <Link to={`/profile/${post.username}`} className="post-card__avatar-link">
+          <div className="post-card__avatar">
+            {post.userProfileImageUrl ? (
+              <img src={post.userProfileImageUrl} alt={post.username} className="post-card__avatar-img" />
+            ) : (
+              post.username?.[0]?.toUpperCase()
+            )}
+          </div>
+        </Link>
         <div className="post-card__meta">
-          <strong>{post.username}</strong>
+          <div className="post-card__author-row">
+            <Link to={`/profile/${post.username}`} className="post-card__author-link">
+              <strong>{post.username}</strong>
+            </Link>
+            <div className="post-card__badges">
+              <span className="mini-badge" title="Curator Score">C:{post.curatorScore}</span>
+              <span className="mini-badge" title="Signal Score">S:{post.signalScore}</span>
+            </div>
+          </div>
           <span>{new Date(post.createdAt).toLocaleString()}</span>
         </div>
       </div>
@@ -104,16 +126,32 @@ export default function PostCard({ post }: { post: PostResponse }) {
           {isLiked ? '❤️' : '🤍'} {likes}
         </button>
         <button className="post-card__btn" onClick={handleToggleComments}>
-          💬 {post.commentCount + comments.length - (showComments ? comments.length : 0) /* naive visual adjust for now */}
+          💬 {post.commentCount + comments.length - (showComments ? comments.length : 0)}
+        </button>
+        <button className="post-card__btn" onClick={() => setIsShareModalOpen(true)}>
+          ♻️ Share
         </button>
       </div>
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        mediaType={post.mediaType as 'TRACK' | 'PLAYLIST'}
+        spotifyId={post.spotifyId}
+        mediaName={post.mediaName}
+        mediaArtist={post.mediaArtist}
+        mediaArtUrl={post.mediaArtUrl}
+        sourcePostId={post.id}
+      />
 
       {showComments && (
         <div className="post-card__comments">
           <div className="post-card__comments-list">
             {comments.map(c => (
               <div key={c.id} className="post-card__comment">
-                <strong>{c.user.username}</strong>
+                <Link to={`/profile/${c.user.username}`} className="post-card__comment-author">
+                  <strong>{c.user.username}</strong>
+                </Link>
                 <p>{c.content}</p>
                 <span className="post-card__comment-time">{new Date(c.createdAt).toLocaleDateString()}</span>
               </div>
@@ -134,3 +172,4 @@ export default function PostCard({ post }: { post: PostResponse }) {
     </div>
   );
 }
+
