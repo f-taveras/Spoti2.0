@@ -2,7 +2,6 @@ package com.spotiapp.backend.security;
 
 import com.spotiapp.backend.model.User;
 import com.spotiapp.backend.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -61,15 +61,21 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // Generate our own JWT and set it as an HttpOnly cookie
         String token = jwtUtil.generateToken(user.getUsername());
 
-        Cookie cookie = new Cookie("auth-token", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(86_400); // 24 hours
-        // cookie.setSecure(true); // Enable in production with HTTPS
-        response.addCookie(cookie);
+        // Use Spring's ResponseCookie to properly set SameSite=None for cross-domain auth
+        // If frontend is Vercel (https) and backend is Railway (https), Secure and SameSite=None is explicitly required.
+        boolean isProduction = frontendUrl.contains("vercel.app") || frontendUrl.startsWith("https://");
+        
+        ResponseCookie springCookie = ResponseCookie.from("auth-token", token)
+                .httpOnly(true)
+                .secure(isProduction)
+                .sameSite(isProduction ? "None" : "Lax")
+                .path("/")
+                .maxAge(86_400) // 24 hours
+                .build();
 
-        // Dynamically redirect to whichever host initiated the login
-        // Send the browser to the React home page
+        response.addHeader("Set-Cookie", springCookie.toString());
+
+        // Dynamically redirect to the frontend URL
         response.sendRedirect(frontendUrl + "/home");
     }
 }
