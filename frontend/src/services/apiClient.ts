@@ -70,7 +70,7 @@ export const apiClient = {
     return request<any>('/api/posts', { method: 'POST', body: JSON.stringify(payload) });
   },
   toggleLike: async (postId: number) => {
-    return request<string>(`/api/posts/${postId}/like`, { method: 'POST', body: JSON.stringify({}) });
+    return request<any>(`/api/posts/${postId}/like`, { method: 'POST', body: JSON.stringify({}) });
   },
   addComment: async (postId: number, content: string) => {
     return request<any>(`/api/posts/${postId}/comments`, { method: 'POST', body: JSON.stringify({ content }) });

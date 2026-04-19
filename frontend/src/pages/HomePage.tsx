@@ -4,12 +4,7 @@ import NavBar from '../components/NavBar';
 import './HomePage.css';
 
 export default function HomePage() {
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-    // AuthProvider sets user = null → App.tsx redirects to /
-  };
+  const { user } = useAuth();
 
   return (
     <div className="home">

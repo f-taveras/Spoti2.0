@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiClient } from '../services/apiClient';
 import NavBar from '../components/NavBar';
 import PostCard from '../components/PostCard';
@@ -18,6 +18,9 @@ interface PostResponse {
   likeCount: number;
   commentCount: number;
   likedByCurrentUser: boolean;
+  userProfileImageUrl: string;
+  curatorScore: number;
+  signalScore: number;
 }
 
 export default function TownSquare() {

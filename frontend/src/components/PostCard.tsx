@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../services/apiClient';
 import ShareModal from './ShareModal';
