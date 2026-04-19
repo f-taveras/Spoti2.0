@@ -199,7 +199,7 @@ export default function LandingPage() {
           </div>
           <a
             id="btn-spotify"
-            href={`${import.meta.env.VITE_API_BASE_URL ?? ''}/oauth2/authorization/spotify`}
+            href={`${(import.meta.env.VITE_API_BASE_URL || '').endsWith('/') ? (import.meta.env.VITE_API_BASE_URL || '').slice(0, -1) : (import.meta.env.VITE_API_BASE_URL || '')}/oauth2/authorization/spotify`}
             className="btn-spotify"
             aria-label="Continue with Spotify"
           >

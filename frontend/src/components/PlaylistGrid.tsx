@@ -77,7 +77,7 @@ const PlaylistGrid: React.FC = () => {
     return (
       <div className="playlists-empty">
         <p>You need to connect your Spotify account to see your playlists.</p>
-        <a href={`${import.meta.env.VITE_API_BASE_URL ?? ''}/oauth2/authorization/spotify`} className="btn-spotify">
+        <a href={`${(import.meta.env.VITE_API_BASE_URL || '').endsWith('/') ? (import.meta.env.VITE_API_BASE_URL || '').slice(0, -1) : (import.meta.env.VITE_API_BASE_URL || '')}/oauth2/authorization/spotify`} className="btn-spotify">
            Connect Spotify
         </a>
       </div>
