@@ -1,6 +1,7 @@
 package com.spotiapp.backend.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,9 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Autowired private JwtAuthFilter                                    jwtAuthFilter;
     @Autowired private SpotifyOAuth2UserService                         spotifyOAuth2UserService;
@@ -83,9 +87,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-            "http://127.0.0.1:5173", 
+            "http://127.0.0.1:5173",
             "http://localhost:5173",
-            "http://192.168.1.131:5173"
+            "http://192.168.1.131:5173",
+            frontendUrl
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

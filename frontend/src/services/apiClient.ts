@@ -3,7 +3,9 @@
  * and handles non-OK responses by throwing structured errors.
  */
 
-const BASE = '';  // Vite proxy handles /api → http://localhost:8080
+// In production (Vercel), VITE_API_BASE_URL points to the Railway backend.
+// In local dev, it's empty so the Vite proxy (/api → localhost:8080) handles requests.
+const BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 interface ApiError {
   message: string;

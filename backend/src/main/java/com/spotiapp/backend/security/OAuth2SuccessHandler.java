@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -25,7 +26,8 @@ import java.util.Map;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final String FRONTEND_HOME = "http://192.168.1.131:5173/home";
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Autowired private JwtUtil                       jwtUtil;
     @Autowired private UserService                   userService;
@@ -67,12 +69,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(cookie);
 
         // Dynamically redirect to whichever host initiated the login
-        // (localhost or LAN IP), so both work without any config change
-        String frontendHost = request.getServerName();
-        int frontendPort = 5173;
-        String frontendHome = "http://" + frontendHost + ":" + frontendPort + "/home";
-
         // Send the browser to the React home page
-        response.sendRedirect(frontendHome);
+        response.sendRedirect(frontendUrl + "/home");
     }
 }
