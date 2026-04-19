@@ -75,6 +75,10 @@ public class SecurityConfig {
                 )
                 // After success: set JWT cookie → redirect to React frontend
                 .successHandler(oAuth2SuccessHandler)
+                // If authentication fails (e.g., user cancels or is not whitelisted by dev), return to frontend
+                .failureHandler((request, response, exception) -> {
+                    response.sendRedirect(frontendUrl + "?error=access_denied");
+                })
             )
 
             // ── JWT filter for all other requests ──────────────────────────────
